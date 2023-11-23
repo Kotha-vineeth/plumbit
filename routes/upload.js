@@ -15,10 +15,12 @@ const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { v4: uuid } = require("uuid"); //for randomising the file-name.
 
 const bucket = new S3Client({
-  region: "ap-south-1",
+  region: "eu-north-1",
   credentials: {
-    accessKeyId: "AKIAXZ55P4DZPZJS5M6B",
-    secretAccessKey: "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",
+    accessKeyId: "AKIA4RKDICDSLKRDG6NH",
+    secretAccessKey: "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",
+    // accessKeyId: "AKIAQ2TJILA4JDB3ERK2",
+    // secretAccessKey: "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",
   },
 });
 
@@ -42,7 +44,7 @@ router.get("/get/preSignedURL", async (req, res) => {
     contentType.split("/")[1];
 
   const command = new PutObjectCommand({
-    Bucket: "learnflow-resource",
+    Bucket: "flatt-bucket",
     Key: fileName,
     ContentType: contentType,
   });
@@ -50,6 +52,7 @@ router.get("/get/preSignedURL", async (req, res) => {
   const url = await getSignedUrl(bucket, command, { expiresIn: 3600 });
   console.log(url);
   console.log(fileName);
+  console.log("Hiii   hhh");
   res.json({
     url,
     fileName,
@@ -62,7 +65,7 @@ module.exports = router;
  *
  * 1. Pre-signed URL -> Used to upload a file on S3 Bucket
  * 2. Make a PUT Request to the above gen pre-signed url to upload the file to s3 Bucket
- * 3. Take CDN URL (https://d1ecyonmvcaoie.cloudfront.net/Screenshot+2023-04-29+at+4-4565ba4e-b9cd-482b-a3a8-b3a02446e7f8.png) -> Update User Profile in DB (PATCH)
+ * 3. Take CDN URL (https://d12txod3npybs5.cloudfront.net/Screenshot+2023-04-29+at+4-4565ba4e-b9cd-482b-a3a8-b3a02446e7f8.png) -> Update User Profile in DB (PATCH)
  *
  */
 

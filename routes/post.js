@@ -10,6 +10,7 @@ const User = mongoose.model("users");
 const Comment = mongoose.model("comments");
 const Like = mongoose.model("likes");
 const View = mongoose.model("views");
+const Bookmark = mongoose.model("bookmarks");
 
 
 const router = express.Router();
@@ -21,6 +22,25 @@ router.get(
   ensureCreator,
   (req, res) => {
     res.render("create-post");
+  }
+);
+router.get(
+  "/myown/post",
+  ensureAuth,
+  ensureSignUp,
+  ensureCreator,
+  async (req, res) => {
+    try{
+      const user = req.user;
+      const posts = await Post.find({userID: user._id});
+      res.locals.ownposts = posts;
+      console.log(posts);
+      res.render("own-post");
+    }
+    catch (error) {
+      console.log(error);
+      res.render("error-500");
+    } 
   }
 );
 
@@ -47,6 +67,8 @@ router.post(
     }
   }
 );
+
+
 
 // router.post("/post/create/new", ensureAuth, ensureCreator, async (req, res) => {
 //   try {
@@ -145,7 +167,12 @@ router.patch("/post/like", ensureAuth, async (req, res) => {
   const id = req.body.id;
   try {
     const post = await Post.findById(id);
-       
+    const user = req.user;
+    const doucs = await Like.find({userID: user.googleID,postID: id});
+    const size = doucs.length;
+
+    if(size == 0)
+    {
     post.likes += 1;
     await post.save();
 
@@ -155,6 +182,48 @@ router.patch("/post/like", ensureAuth, async (req, res) => {
     });
     console.log(like);
     res.status(200).json({});
+    }
+    else
+    res.status(400).json({});
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({});
+  }
+});
+
+router.patch("/post/bookmark", ensureAuth, async (req, res) => {
+  const id = req.body.id;
+  try {
+    const post = await Post.findById(id);
+    const user = req.user;
+    const doucs = await Bookmark.find({userID: user.googleID,postID: id});
+    const size = doucs.length;
+
+    if(size == 0)
+    {
+    const bookmark = await Bookmark.create({
+      userID: req.user.googleID,
+      postID: id,
+    });
+    // console.log(like);
+    res.status(200).json({});
+    }
+    else
+    res.status(400).json({});
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({});
+  }
+});
+
+router.delete("/post/delete", ensureAuth,ensureCreator, async (req, res) => {
+  const id = req.body.id;
+  try {
+    const post = await Post.findById(id);
+    //console.log(post);
+    await Post.deleteOne({_id: id});  
+    res.status(200).json({});
+    // res.render("dashboard");
   } catch (error) {
     console.log(error);
     res.status(400).json({});
@@ -179,5 +248,41 @@ router.patch("/post/view", ensureAuth, async (req, res) => {
   }
 });
 
+router.get('/search', ensureAuth, async(req, res) => {
+  try{
+  const searchQuery = req.query.q;
+  const posts = await Post.find({title: searchQuery});
+  res.locals.queryposts = posts;
+  res.render("querypost");
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({});
+  }
+});
+
+router.get('/bookmarked/posts', ensureAuth, async(req, res) => {
+  try{
+    const savedposts = [];
+    const posts = await Bookmark.find({userID: req.user.googleID});
+    var x = 0;
+    // console.log("Bookmarked Posts-1");
+    posts.forEach(async (curpost) => {
+      const item = await Post.findById(curpost.postID);
+      x++;
+      console.log("Bookmarked Posts-2");
+      savedposts.push(item);
+      if(x == posts.length)
+      {
+        res.locals.bookedposts = savedposts;
+        res.render("bookmarkpost");
+      }
+    })
+  // console.log("Bookmarked Posts-3", x);
+  // console.log(savedposts);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({});
+  }
+});
 module.exports = router;
 

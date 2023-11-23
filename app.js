@@ -9,6 +9,7 @@ require("./models/User");
 require("./models/Post");
 require("./models/Comment");
 require("./models/Like");
+require("./models/Bookmark");
 require("./models/View");
 
 const app = express();

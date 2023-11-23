@@ -390,7 +390,8 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        image: `https://d1cjik9nzpo9go.cloudfront.net/${urlData.fileName}`,
+         image: `https://d12txod3npybs5.cloudfront.net/${urlData.fileName}`,
+        // image: `https://d1ecyonmvcaoie.cloudfront.net/${urlData.fileName}`,
       }),
     });
 
@@ -404,8 +405,11 @@
 </script>
 
 <script>
+  // headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+  // headers.append('Access-Control-Allow-Credentials', 'true');
   const changeCoverForm = document.querySelector("#change-cover");
   changeCoverForm.addEventListener("submit", async (e) => {
+
     e.preventDefault();
     const CoverFile = document.querySelector("#cover").files[0];
     //gets pre-signed url
@@ -414,16 +418,20 @@
       { method: "GET" }
     );
     const urlData = await urlResponse.json(); //gets pre-signed url
-
+    // console.log(urlData.url);
     //goes to that pre-signed url and uploads image in s3 bucket
+    console.log("1000");
     const uploadResponse = await fetch(urlData.url, {
+     
       method: "PUT",
+      // mode:"no-cors",
       headers: {
         "Content-Type": CoverFile.type,
       },
       body: CoverFile,
-    });
-
+      
+    })
+    // console.log(uploadResponse);
     //Make the patch request to database to update the picture 
     const response = await fetch("/profile", {
       method: "PATCH",
@@ -431,13 +439,14 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        cover: `https://d1cjik9nzpo9go.cloudfront.net/${urlData.fileName}`,
+         cover: `https://d12txod3npybs5.cloudfront.net/${urlData.fileName}`,
+        // cover: `https://d1ecyonmvcaoie.cloudfront.net/${urlData.fileName}`,
       }),
     });
 
     const data = await response.json();
     if (data._id) {
-      window.location.reload(true);
+      // window.location.reload(true);
     } else {
       alert("Oops, something went wrong");
     }

@@ -106,6 +106,21 @@
                       ></i>
                     </a>
                     <% } %>
+
+                    <a
+                    href="#"
+                    onclick="bookmark(`<%= post._id %>`)"
+                    class="action-item action-like active ml-3"
+                    data-toggle="tooltip"
+                    id="bookmarkBtn"
+                    data-original-title="Bookmark"
+                  >
+                    <i
+                      class="far fa-bookmark"
+                      style="transform: scale(1.5)"
+                    ></i>
+                  </a>
+
                   <a
                       style="cursor: pointer"
                       data-toggle="tooltip"
@@ -119,6 +134,26 @@
                         style="transform: scale(1.5)"
                       ></i>
                     </a>
+                    <!-- <% console.log("yes") %>
+                    <% console.log(post.userID) %>
+                    <% console.log(user._id) %> -->
+                    <% let vin = (user._id).toString() %>
+                    <% if (post.userID === vin) { %>
+                      <!-- <% console.log("yes2") %> -->
+                      <a
+                      style="cursor: pointer"
+                      data-toggle="tooltip"
+                      data-original-title="Delete Post"
+                      class="ml-3"
+                      id="deleteBtn"
+                      onclick="deletefunc(`<%= post._id %>`)"
+                    >
+                      <i
+                      class="fas fa-trash"
+                      style="transform: scale(1.5)"
+                      ></i>
+                    </a>
+                    <% } %> 
                   </div>
                 </div>
               </div>
@@ -478,9 +513,26 @@
           likeCnt.innerHTML = Number(likeCnt.textContent.trim()) + 1;
           likeBtn.innerHTML = `<i class="fas fa-thumbs-up fa-2x"></i>`;
         } else {
-          alert("Oops, Something went wrong!");
+          alert("You already liked the post!");
         }
       };
+
+      const bookmark = async (postID) => {
+        const response = await fetch("/post/bookmark", {
+          method: "PATCH",
+          body: JSON.stringify({
+            id: postID,
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await response.json();
+        if (response.status == 200) {
+          window.location.href = "/dashboard";
+        } else {
+          alert("You already Bookmarked the post!");
+        }
+      };
+
     const share = () => {
       // Copy the text inside the text field
       navigator.clipboard.writeText(window.location.href);
@@ -492,6 +544,24 @@
         shareBtn.setAttribute("data-original-title", "Share Link");
       }, 5000);
     };
+    const deletefunc = async (postID) => {
+      
+        const response = await fetch("/post/delete", {
+          method: "DELETE",
+          body: JSON.stringify({
+            id: postID,
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+        console.log("In ejs delete");
+        const data = await response.json();
+        if (response.status == 200) {
+          console.log("Post got deleted");
+          window.location.href = "/dashboard";
+        } else {
+          alert("Oops, Something went wrong!");
+        }
+      };
   </script>
 
 <script>

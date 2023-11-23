@@ -6,7 +6,14 @@ const { ensureNewUser, ensureSignUp } = require("../middleware/user");
 const { fetchAllPosts } = require("../middleware/post");
 
 const router = express.Router();
+const cors=require("cors");
+const corsOptions ={
+   origin:'*', 
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+}
 
+router.use(cors(corsOptions)) 
 router.get("/", ensureGuest, (req, res) => {
   res.render("login");
 });

@@ -436,6 +436,9 @@
   const postForm = document.querySelector("#post-form");
   postForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    $("#loadingModal").modal("show");
+    $("#successModal").modal("hide");
+    $("#errorModal").modal("hide");
     const title = postForm.title.value;
     const subTitle = postForm.subTitle.value;
     const description = editor1.getHTMLCode();
@@ -490,8 +493,8 @@
         title,
         subTitle,
         description,
-        thumbnailKey: `https://d1cjik9nzpo9go.cloudfront.net/${urlData.fileName}`,
-        videoKey: `https://d1cjik9nzpo9go.cloudfront.net/${urlData1.fileName}`,
+        thumbnailKey: `https://d12txod3npybs5.cloudfront.net/${urlData.fileName}`,
+        videoKey: `https://d12txod3npybs5.cloudfront.net/${urlData1.fileName}`,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -500,9 +503,13 @@
 
     const data = await response.json();
     if (data._id) {
+      $("#loadingModal").modal("hide");
+      $("#successModal").modal("show");
       window.location.href = "/dashboard";
     } else {
-      alert("Oops, something went wrong !");
+      $("#loadingModal").modal("hide");
+      $("#errorModal").modal("show");
+     // alert("Oops, something went wrong !");
     }
   });
 </script>
