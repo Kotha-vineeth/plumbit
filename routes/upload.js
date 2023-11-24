@@ -13,12 +13,12 @@
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { v4: uuid } = require("uuid"); //for randomising the file-name.
-
+require('dotenv').config();
 const bucket = new S3Client({
   region: "eu-north-1",
   credentials: {
-    accessKeyId: "AKIA4RKDICDSLKRDG6NH",
-    secretAccessKey: "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",
+    accessKeyId: process.env.ACCESS_KEY,
+    secretAccessKey: process.env.SECRET_KEY,
     // accessKeyId: "AKIAQ2TJILA4JDB3ERK2",
     // secretAccessKey: "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",
   },
