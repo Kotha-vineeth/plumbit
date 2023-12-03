@@ -140,8 +140,27 @@
                     </div>
                   </div>
                 </div>
-
                 
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-control-label mb-3"
+                        >Image File</label
+                      >
+                      <input
+                        type="file"
+                        id="image"
+                        accept="image/*"
+                        class="custom-input-file"
+                      />
+                      <label for="image">
+                        <i class="fa fa-upload"></i>
+                        <span>Choose a file…</span>
+                      </label>
+                    </div>
+                  </div>
+
                 <!-- Description -->
                 <div class="mt-5 delimiter-top">
                   <div class="actions-toolbar py-2 mb-4">
@@ -449,6 +468,7 @@
 
 
     const thumbnailFile = document.querySelector("#video-thumbnail").files[0];
+    const imageFile = document.querySelector("#image").files[0];
     const videoFile = document.querySelector("#video").files[0];
     //gets pre-signed url
     const urlResponse = await fetch(
@@ -481,12 +501,23 @@
       body: videoFile,
     });
 
+    //gets pre-signed url
+    const urlResponse2 = await fetch(
+      `/get/preSignedURL?fileName=${imageFile.name}&contentType=${imageFile.type}`,
+      { method: "GET" }
+    );
+    const urlData2 = await urlResponse2.json(); //gets pre-signed url
+
+    //goes to that pre-signed url and uploads image in s3 bucket
+    const uploadResponse2 = await fetch(urlData2.url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": imageFile.type,
+      },
+      body: imageFile,
+    });
+
     //Make the patch request to database to update the picture 
-
-
-
-
-
     const response = await fetch("/create/post", {
       method: "POST",
       body: JSON.stringify({
@@ -495,6 +526,7 @@
         description,
         thumbnailKey: `https://d12txod3npybs5.cloudfront.net/${urlData.fileName}`,
         videoKey: `https://d12txod3npybs5.cloudfront.net/${urlData1.fileName}`,
+        imageKey: `https://d12txod3npybs5.cloudfront.net/${urlData2.fileName}`
       }),
       headers: {
         "Content-Type": "application/json",
