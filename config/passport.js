@@ -16,7 +16,7 @@ passport.use(
       clientID:
          "738128673369-ef2bhrut8p9q45i0g1ogc5lfc183emn6.apps.googleusercontent.com",
        clientSecret: "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",
-      callbackURL: "/auth/google/callback",
+      callbackURL: "https://obraider.onrender.com/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       const newUser = {
