@@ -28,7 +28,7 @@ router.get(
   }),
   (req, res) => {
     const user = req.user;
-    if (user.role !== 0 || user.role !== 1) {
+    if (user.role !== 0 || user.role !== 1 || user.role !== 2) {
       return res.redirect("/signup");
     }
     res.redirect("/dashboard");

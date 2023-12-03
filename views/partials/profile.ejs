@@ -26,8 +26,10 @@
       <h5 class="mb-0"><%= user.displayName %></h5>
       <% if(user.role===0) { %>
       <span class="d-block text-muted mb-3">Resident</span>
+      <% } else if(user.role===1){ %>
+        <span class="d-block text-muted mb-3">Plumber</span>
       <% } else { %>
-      <span class="d-block text-muted mb-3">Plumber</span>
+      <span class="d-block text-muted mb-3">Engineering-Team</span>
       <% } %>
 
       <div class="actions mt-3 pt-3 px-5 delimiter-top">

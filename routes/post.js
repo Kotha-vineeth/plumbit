@@ -138,7 +138,7 @@ router.get("/post/:id", ensureAuth, async (req, res) => {
     const postDate = moment(post.createdAt).format("dddd, MMMM Do YYYY");
 
     const comments = await Comment.find({ postID: postID, depth: 1 });
-     
+    comments.sort((a, b) => b.likes.length - a.likes.length);
 
     let likeDoc = await Like.findOne({ userID: post.userID, postID: postID });
     let temp = false;

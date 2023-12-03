@@ -41,6 +41,42 @@ router.get("/fetch/reply", ensureAuth, async (req, res) => {
     res.status(500).send({});
   }
 });
+router.post("/toggle-like-dislike/comment", ensureAuth, async (req, res) => {
+  const commentId = req.body.commentId;
+  const userId = req.user._id;
+
+  try {
+    // Find the comment by ID
+    const comment = await Comment.findById(commentId);
+
+    // Check if the user has already liked the comment
+    const isLiked = comment.likes.includes(userId);
+
+    if (isLiked) {
+      // If the user has already liked, unlike
+      comment.likes.pull(userId);
+    } else {
+      // If the user hasn't liked, like
+      comment.likes.push(userId);
+    }
+    console.log(comment.likes);
+    // Save the updated comment
+    await comment.save();
+
+    // Send the updated information to the client
+    res.status(200).json({
+      success: true,
+      isLiked: !isLiked, // Toggle the liked status
+      likeDislikeCount: comment.likes.length ,
+    });
+  } catch (error) {
+    console.error('Error in toggle-like-dislike:', error);
+    res.status(500).json({
+      success: false,
+      error: "Something went wrong",
+    });
+  }
+});
 
 module.exports = router;
 

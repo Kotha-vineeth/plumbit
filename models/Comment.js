@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const User = mongoose.model("users");
 const CommentSchema = new mongoose.Schema({
   postID: {
     type: String,
@@ -29,6 +29,10 @@ const CommentSchema = new mongoose.Schema({
     type: Number,
     default: Date.now(),
   },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
 });
 
 mongoose.model("comments", CommentSchema);

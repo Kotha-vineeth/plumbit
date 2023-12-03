@@ -6,13 +6,13 @@ const ensureCreator = (req, res, next) => {
 
 const ensureStudent = (req, res, next) => {
   const user = req.user;
-  if (user.role === 1) return next();
+  if (user.role === 1 || user.role === 2) return next();
   res.redirect("/dashboard");
 };
 
 const ensureSignUp = (req, res, next) => {
   const user = req.user;
-  if (user.role === 0 || user.role === 1) {
+  if (user.role === 0 || user.role === 1 || user.role === 2) {
     return next();
   }
   res.redirect("/signup");
@@ -20,7 +20,7 @@ const ensureSignUp = (req, res, next) => {
 
 const ensureNewUser = (req, res, next) => {
   const user = req.user;
-  if (user.role === 0 || user.role === 1) {
+  if (user.role === 0 || user.role === 1 || user.role === 2) {
     return res.redirect("/dashboard");
   }
   next();

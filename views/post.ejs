@@ -227,6 +227,22 @@
                         <span class="text-muted">Reply</span>
                       </button>
                     </div>
+                    <div class="voting-section">
+         <% if(user.role===2){%>
+                  
+                      <!-- Like/Dislike button -->
+    <button onclick="toggleLikeDislike('<%= comment._id %>')" class="like-dislike-button">      
+      <span class="like-icon" style="<%= comment.likes.includes(user._id) ? 'display:none;' : '' %>">Like</span>
+      <span class="dislike-icon" style="<%= comment.likes.includes(user._id) ? '' : 'display:none;' %>">Dislike</span>
+    </button> 
+    <span class="like-dislike-count"><%= (comment.likes ? comment.likes.length : 0) %></span>
+
+    <%  } else{ %>
+    <b>Upvotes :</b>
+    <span class="like-dislike-count"><%= (comment.likes ? comment.likes.length : 0) %></span>
+    <%  }  %>
+                    </div>
+                
                   </div>
                 </div>
               </div>
@@ -301,6 +317,89 @@
         child.style.fontFamily = ``;
       }
     </script> -->
+
+    <script>
+      async function toggleLikeDislike(commentId) {
+  try {
+    const response = await fetch(`/toggle-like-dislike/comment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ commentId }),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to toggle like/dislike for comment. HTTP status:', response.status);
+      return;
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      console.error('Failed to toggle like/dislike for comment. Server response:', data);
+      return;
+    }
+
+    // Update the UI to reflect the toggle
+    const likeIcon = document.querySelector(`#comment-${commentId} .like-icon`);
+    const dislikeIcon = document.querySelector(`#comment-${commentId} .dislike-icon`);
+    const likeDislikeCountSpan = document.querySelector(`#comment-${commentId} .like-dislike-count`);
+
+    if (data.isLiked) {
+      likeIcon.style.display = 'none';
+      dislikeIcon.style.display = 'inline';
+    } else {
+      likeIcon.style.display = 'inline';
+      dislikeIcon.style.display = 'none';
+    }
+
+    likeDislikeCountSpan.textContent = data.likeDislikeCount;
+  } catch (error) {
+    console.error('Error in toggleLikeDislike:', error);
+  }
+}
+
+    </script><script>
+  async function toggleLikeDislike(commentId) {
+    try {
+      const response = await fetch(`/toggle-like-dislike/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ commentId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to toggle like/dislike for comment. HTTP status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(`Failed to toggle like/dislike for comment. Server response: ${JSON.stringify(data)}`);
+      }
+
+      // Update the UI to reflect the toggle
+      const likeIcon = document.querySelector(`#comment-${commentId} .like-icon`);
+      const dislikeIcon = document.querySelector(`#comment-${commentId} .dislike-icon`);
+      const likeDislikeCountSpan = document.querySelector(`#comment-${commentId} .like-dislike-count`);
+      console.log(data.isLiked);
+      if (data.isLiked) {
+        likeIcon.style.display = 'none';
+        dislikeIcon.style.display = 'inline';
+      } else {
+        likeIcon.style.display = 'inline';
+        dislikeIcon.style.display = 'none';
+      }
+
+      likeDislikeCountSpan.textContent = data.likeDislikeCount;
+    } catch (error) {
+      console.error('Error in toggleLikeDislike:', error.message);
+    }
+  }
+</script>
+
 
     <script>
       const commentForm = document.querySelector(`.post-<%- post._id %>`);
