@@ -11365,6 +11365,10 @@ button.bg-white:hover {
 .text-center {
   text-align: center !important;
 }
+.bg-white{
+  text-align: center !important;
+  background-color: white;
+}
 @media (min-width: 576px) {
   .text-sm-left {
     text-align: left !important;
