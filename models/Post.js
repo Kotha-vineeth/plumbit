@@ -17,6 +17,9 @@ const PostSchema = new mongoose.Schema({
   videoKey: {
     type: String,
   },
+  imageKey: {
+    type: String,
+  },
   userID: {
     type: String,
     required: true,
